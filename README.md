@@ -1,4 +1,4 @@
-# [Project 1: Noise](https://github.com/CIS-566-Fall-2022/hw01-fireball-base)
+# [Project 1: Noise-Based Fireball](https://github.com/CIS-566-Fall-2022/hw01-fireball-base)
 
 
 
