@@ -21,7 +21,7 @@ const controls = {
   worley: 5,
   'fireball tesselations': 0.8,
   'fireball speed': 1.0,
-  'fireball density': 1.0,
+  'fireball bumpness': 0.1,
   'fireball brightness': 1.0,
 };
 
@@ -71,8 +71,8 @@ function main() {
   {
     gui.add(controls, 'fireball tesselations', 0.0, 1.0).step(0.1);
     gui.add(controls, 'fireball speed', 0.0, 5.0).step(0.1);
-    gui.add(controls, 'fireball density', 0.0, 5.0).step(0.1);
-    gui.add(controls, 'fireball brightness', 0.0, 5.0).step(0.1);
+    gui.add(controls, 'fireball bumpness', 0.0, 1.0).step(0.01);
+    gui.add(controls, 'fireball brightness', 0.0, 5.0).step(0.01);
   }
 
   // get canvas and webgl context
@@ -135,7 +135,7 @@ function main() {
     //console.log('Time:', time);
 
     // get fireball params
-    const fire_params = vec4.fromValues(controls["fireball tesselations"], controls["fireball speed"], controls["fireball density"], controls["fireball brightness"]);
+    const fire_params = vec4.fromValues(controls["fireball tesselations"], controls["fireball speed"], controls["fireball bumpness"], controls["fireball brightness"]);
 
     // ----------------- render -----------------   //
     if(controls.shader == 'lambert')

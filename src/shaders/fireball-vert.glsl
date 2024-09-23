@@ -13,6 +13,8 @@ uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformati
                             // but in HW3 you'll have to generate one yourself
 
 uniform float u_Time;       // The time in seconds since the program started running
+uniform vec4 u_FireNoiseParams;
+
 
 in vec4 vs_Pos;             // The array of vertex positions passed to the shader
 
@@ -184,13 +186,15 @@ void main()
     texCoord.x = (theta + 3.14159265359) / (2.0 * 3.14159265359);
     texCoord.y = phi / 3.14159265359;
 
+    float rotationSpeed = u_FireNoiseParams[1] / 10.0;
     vec2 noiseCoord;
-    noiseCoord.x = 0.5 * (1.0 + sin(theta + u_Time * 0.01));
-    noiseCoord.y = 0.5 * (1.0 + cos(phi + u_Time * 0.01));
+    noiseCoord.x = 0.5 * (1.0 + sin(theta + u_Time * rotationSpeed));
+    noiseCoord.y = 0.5 * (1.0 + cos(phi + u_Time * rotationSpeed));
     
     texCoord.x = noiseCoord.x;
     texCoord.y = noiseCoord.y;
 
+    float bumpness = u_FireNoiseParams[2];
     // compute the radius of the fireball
     float radius = 0.2;
     float corona_length = 0.3;
@@ -198,7 +202,7 @@ void main()
     radius = radius * fbm3(vs_Pos.yzx, 0.6);
     radius += noise(vs_Pos.xyz * 0.4) * corona_length *( 0.1 * sin(u_Time) + 0.2) + 0.3;
     // apply another layer of noise to smooth the surface
-    radius += 0.1 * noise(vs_Pos.yxz * 0.01) * fbm3(vs_Pos.zyx * 0.8, 0.1);
+    radius += bumpness * noise(vs_Pos.yxz * 0.1) * fbm3(vs_Pos.zyx * 0.8, 0.1) * sin(u_Time * 0.01);
     vec4 newPos = vs_Pos + vs_Nor * radius;
 
     vec4 modelposition = u_Model * newPos;   // Temporarily store the transformed vertex positions for use below

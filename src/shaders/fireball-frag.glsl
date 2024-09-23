@@ -162,6 +162,11 @@ vec3 convertRGB(float r, float g, float b) {
     return vec3(r / 255.0, g / 255.0, b / 255.0);
 }
 
+// adjust hue
+vec3 blendWithBaseColor(vec3 originalColor, vec3 baseColor, float blendFactor) {
+    return mix(originalColor, baseColor, blendFactor); // Blend the original with the new base color
+}
+
 void main()
 {
     vec3 viewDir = normalize(u_CamPos.xyz - fs_Pos.xyz);
@@ -196,12 +201,22 @@ void main()
     vec3 color4 = convertRGB(227.0, 9.0, 5.0); // red
     vec3 color5 = convertRGB(0.0, 0.0, 0.0); // black
     vec3 fireColor = vec3(0.0);
+
+    vec3 color_base = u_Color.xyz;
+
+    // add hue to the fireball
+    vec3 color_hue0 = blendWithBaseColor(color0, color_base, 0.5);
+    vec3 color_hue1 = blendWithBaseColor(color1, color_base, 0.5);
+    vec3 color_hue2 = blendWithBaseColor(color2, color_base, 0.5);
+    vec3 color_hue3 = blendWithBaseColor(color3, color_base, 0.75);
+    vec3 color_hue4 = blendWithBaseColor(color4, color_base, 0.9);
+    vec3 color_hue5 = blendWithBaseColor(color5, color_base, 0.5);
     // mix color based on fire intensity
-    fireColor = mix(color5, color4, smoothstep(0.0, 0.5, fireIntensity)); // black to red
-    fireColor = mix(fireColor, color3, smoothstep(0.5, 0.85, fireIntensity)); // red to yellow
-    fireColor = mix(fireColor, color2, smoothstep(0.85, 0.95, fireIntensity)); // yellow to white
-    fireColor = mix(fireColor, color1, smoothstep(0.95, 0.98, fireIntensity)); // white to blue
-    fireColor = mix(fireColor, color0, smoothstep(0.98, 1.0, fireIntensity)); // blue to black
+    fireColor = mix(color_hue5, color_hue4, smoothstep(0.0, 0.5, fireIntensity)); // black to red
+    fireColor = mix(fireColor, color_hue3, smoothstep(0.5, 0.85, fireIntensity)); // red to yellow
+    fireColor = mix(fireColor, color_hue2, smoothstep(0.85, 0.95, fireIntensity)); // yellow to white
+    fireColor = mix(fireColor, color_hue1, smoothstep(0.95, 0.98, fireIntensity)); // white to blue
+    fireColor = mix(fireColor, color_hue0, smoothstep(0.98, 1.0, fireIntensity)); // blue to black
 
     // alpha channel based on fire intensity
     float alpha = 1.0;
@@ -217,7 +232,8 @@ void main()
 
     
     // brightness based on fire intensity
-    float brightness = pow(fireIntensity, 1.5);
+    float brightness_param = u_FireNoiseParams[3];
+    float brightness = pow(fireIntensity, brightness_param);
     //fireColor = fireColor * brightness;
 
     // add rim lighting
@@ -236,9 +252,9 @@ void main()
 
 
     // add noise to the fireball
-    float noiseIntensity = 0.1;
+    float noiseIntensity = 0.03;
     float noiseValue = noise(fs_Pos.xyz * 0.5);
-    fireColor = mix(fireColor, noiseValue * color3, noiseIntensity);
+    fireColor = brightness_param * mix(fireColor, noiseValue * color3, noiseIntensity);
 
     
    
