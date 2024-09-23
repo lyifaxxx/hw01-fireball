@@ -19,16 +19,53 @@ const controls = {
   alpha: 1.0,
   shader: 'fireball',
   worley: 5,
-  'fireball tesselations': 0.8,
-  'fireball speed': 1.0,
-  'fireball bumpness': 0.1,
-  'fireball brightness': 1.0,
+  'tesselation': 0.8,
+  'speed': 1.0,
+  'bumpness': 0.1,
+  'brightness': 1.0,
 };
 
 let icosphere: Icosphere;
 let square: Square;
 let cube: Cube;
 let prevTesselations: number = 5;
+
+// functions to set the preset params
+function setFireballPreset_red()
+{
+  controls.color = [237,40,40];
+  controls['tesselation'] = 0.66;
+  controls['speed'] = 4.9;
+  controls['bumpness'] = 0.0;
+  controls['brightness'] = 2.28;
+}
+
+function setFireballPreset_orange()
+{
+  controls.color = [237, 130, 40];
+  controls['tesselation'] = 0.8;
+  controls['speed'] = 1.0;
+  controls['bumpness'] = 0.1;
+  controls['brightness'] = 1.0;
+}
+
+function setFireballPreset_blue()
+{
+  controls.color = [46, 122, 227];
+  controls['tesselation'] = 0.66;
+  controls['speed'] = 0.9;
+  controls['bumpness'] = 0.22;
+  controls['brightness'] = 1.34;
+}
+
+function setFireballPreset_green()
+{
+  controls.color = [11, 50, 6];
+  controls['tesselation'] = 0.66;
+  controls['speed'] = 0.4;
+  controls['bumpness'] = 0.15;
+  controls['brightness'] = 1.45;
+}
 
 function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
@@ -50,7 +87,7 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  gui.add(controls, 'tesselations', 0, 8).step(1);
+  gui.add(controls, 'tesselation', 0, 8).step(1);
   gui.add(controls, 'Load Scene');
   //gui to toogle u_Color
   gui.addColor(controls, 'color');
@@ -69,11 +106,22 @@ function main() {
   // add fireball gui elements
   if(controls.shader == 'fireball')
   {
-    gui.add(controls, 'fireball tesselations', 0.0, 1.0).step(0.1);
-    gui.add(controls, 'fireball speed', 0.0, 5.0).step(0.1);
-    gui.add(controls, 'fireball bumpness', 0.0, 1.0).step(0.01);
-    gui.add(controls, 'fireball brightness', 0.0, 5.0).step(0.01);
+    // create folder for fireball params and fireball param presets
+    const fireballFolder = gui.addFolder('Fireball Params');
+    fireballFolder.add(controls, 'tesselation', 0.0, 1.0).step(0.01).listen();
+    fireballFolder.add(controls, 'speed', 0.0, 5.0).step(0.1).listen();
+    fireballFolder.add(controls, 'bumpness', 0.0, 1.0).step(0.01).listen();
+    fireballFolder.add(controls, 'brightness', 0.0, 5.0).step(0.01).listen();
+
+    const fireballPresetFolder = fireballFolder.addFolder('Fireball Presets');
+    fireballPresetFolder.add({preset: setFireballPreset_red}, 'preset').name('Authentic Fireball');
+    fireballPresetFolder.add({preset: setFireballPreset_orange}, 'preset').name('Warm Orange');
+    fireballPresetFolder.add({preset: setFireballPreset_blue}, 'preset').name('Ice Wizard');
+    fireballPresetFolder.add({preset: setFireballPreset_green}, 'preset').name('Wild Fire from GotT');
   }
+
+  
+
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -135,7 +183,11 @@ function main() {
     //console.log('Time:', time);
 
     // get fireball params
-    const fire_params = vec4.fromValues(controls["fireball tesselations"], controls["fireball speed"], controls["fireball bumpness"], controls["fireball brightness"]);
+    const fire_params = vec4.fromValues(
+      controls["tesselation"], 
+      controls["speed"], 
+      controls["bumpness"], 
+      controls["brightness"]);
 
     // ----------------- render -----------------   //
     if(controls.shader == 'lambert')
