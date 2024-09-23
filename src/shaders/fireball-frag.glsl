@@ -241,7 +241,7 @@ void main()
     rim = pow(rim, 10.0);
     rim = clamp(rim, 0.0, 1.0);
     vec3 rimColor = convertRGB(224.0, 112.0, 0.0);
-    fireColor = mix(fireColor, color3, rim);
+    fireColor = mix(fireColor, color_hue3, rim);
 
     // mix color with background color
     fireColor = mix(u_BkgColor.rgb, fireColor, smoothstep(0.2, 0.5, alpha));
