@@ -103,17 +103,20 @@ function main() {
     gui.add(controls, 'worley', 0.0, 50.0).step(1);
   }
 
+  let fireballFolder: DAT.GUI;
+  let fireballPresetFolder: DAT.GUI;
+
   // add fireball gui elements
   if(controls.shader == 'fireball')
   {
     // create folder for fireball params and fireball param presets
-    const fireballFolder = gui.addFolder('Fireball Params');
+    fireballFolder = gui.addFolder('Fireball Params');
     fireballFolder.add(controls, 'tesselation', 0.0, 1.0).step(0.01).listen();
     fireballFolder.add(controls, 'speed', 0.0, 5.0).step(0.1).listen();
     fireballFolder.add(controls, 'bumpness', 0.0, 1.0).step(0.01).listen();
     fireballFolder.add(controls, 'brightness', 0.0, 5.0).step(0.01).listen();
 
-    const fireballPresetFolder = fireballFolder.addFolder('Fireball Presets');
+    fireballPresetFolder = fireballFolder.addFolder('Fireball Presets');
     fireballPresetFolder.add({preset: setFireballPreset_red}, 'preset').name('Authentic Fireball');
     fireballPresetFolder.add({preset: setFireballPreset_orange}, 'preset').name('Warm Orange');
     fireballPresetFolder.add({preset: setFireballPreset_blue}, 'preset').name('Ice Wizard');
@@ -181,6 +184,8 @@ function main() {
       icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, prevTesselations);
       icosphere.create();
     }
+    fireballFolder.open();
+    fireballPresetFolder.open();
     // get time
     const time = performance.now() / 1000.0;
     //console.log('Time:', time);
