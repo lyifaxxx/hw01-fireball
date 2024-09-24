@@ -118,6 +118,9 @@ function main() {
     fireballPresetFolder.add({preset: setFireballPreset_orange}, 'preset').name('Warm Orange');
     fireballPresetFolder.add({preset: setFireballPreset_blue}, 'preset').name('Ice Wizard');
     fireballPresetFolder.add({preset: setFireballPreset_green}, 'preset').name('Wild Fire');
+
+    fireballFolder.open();
+    fireballPresetFolder.open();
   }
 
   
